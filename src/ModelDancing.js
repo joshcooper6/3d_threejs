@@ -7,43 +7,80 @@ import { useFrame } from '@react-three/fiber'
 export function Model(props) {
   const group = useRef()
   const { nodes, scene, materials, animations } = useGLTF('/FinishedCharacter.glb')
-
+  const [current, setCurrent] = useState('wave');
   let mixer = new AnimationMixer(scene);
   let actions = mixer._actions;
-  console.log(actions)
+  useFrame((state, delta) => { mixer.update(delta) } );
+  console.log('Current Actions', actions);
 
-  const useAnimations = (anims) => {
-    anims.forEach((animation) => {
+  const actsFromAnims = (animations) => {
+    animations.forEach((animation) => {
       let action = mixer.clipAction(animation);
       action.setLoop(1, 1);
     });
-
-    mixer.addEventListener('finished', (e) => {
-      let currentAction = e.action;
-      let currentIndex = actions.indexOf(currentAction);
-      let totalActions = (actions.length - 1);
-  
-      if (currentIndex < totalActions) {
-        currentAction.stop();
-        let newIndx = currentIndex + 1;
-        mixer._actions[newIndx].play();
-      } else {
-        let newIndx = 0;
-        currentAction.stop();
-        mixer._actions[newIndx].play();
-      };
-  
-      console.log('Actions Length', actions.length)
-      console.log('Current Action Index', actions.indexOf(currentAction))
-      console.log('Needs to be <', totalActions)
-      console.log('Actions Array', actions);
-    });
-
-    useFrame((state, delta) => { mixer.update(delta) } );
-    actions[3].play();
   };
+
+  actsFromAnims(animations);
+
+  const renderAnimation = (input) => {
+    switch(input) {
+      case 'wave':
+        return actions[3];
+        break;
+      case 'dance': 
+      return actions[0];
+      break;
+      case 'death': 
+      return actions[1];
+      break;
+      case 'thriller':
+      return actions[2];
+      break;
+    }
+  };
+
+  console.log(renderAnimation(current)._clip.duration)
+
+  const currentDuration = renderAnimation(current)._clip.duration;
+
+  useEffect(() => {
+    renderAnimation(current).play();
+  }, []);
+
+
+
+  // const useAnimations = (anims) => {
+  //   anims.forEach((animation) => {
+  //     let action = mixer.clipAction(animation);
+  //     action.setLoop(1, 1);
+  //   });
+
+  //   mixer.addEventListener('finished', (e) => {
+  //     let currentAction = e.action;
+  //     let currentIndex = actions.indexOf(currentAction);
+  //     let totalActions = (actions.length - 1);
   
-  useAnimations(animations);
+  //     if (currentIndex < totalActions) {
+  //       currentAction.stop();
+  //       let newIndx = currentIndex + 1;
+  //       mixer._actions[newIndx].play();
+  //     } else {
+  //       let newIndx = 0;
+  //       currentAction.stop();
+  //       mixer._actions[newIndx].play();
+  //     };
+  
+  //     console.log('Actions Length', actions.length)
+  //     console.log('Current Action Index', actions.indexOf(currentAction))
+  //     console.log('Needs to be <', totalActions)
+  //     console.log('Actions Array', actions);
+  //   });
+
+  //   useFrame((state, delta) => { mixer.update(delta) } );
+  //   actions[3].play();
+  // };
+  
+  // useAnimations(animations);
 
   const hc = (e) => {
     // mixer.stopAllAction();
