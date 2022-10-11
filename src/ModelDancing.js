@@ -7,11 +7,10 @@ import { useFrame } from '@react-three/fiber'
 export function Model(props) {
   const group = useRef()
   const { nodes, scene, materials, animations } = useGLTF('/FinishedCharacter.glb')
-  const [current, setCurrent] = useState('wave');
+  const [current, setCurrent] = useState('Waving');
   let mixer = new AnimationMixer(scene);
   let actions = mixer._actions;
   useFrame((state, delta) => { mixer.update(delta) } );
-  console.log('Current Actions', actions);
 
   const actsFromAnims = (animations) => {
     animations.forEach((animation) => {
@@ -21,33 +20,21 @@ export function Model(props) {
   };
 
   actsFromAnims(animations);
+  console.log('Loaded actions...', actions);
 
-  const renderAnimation = (input) => {
-    switch(input) {
-      case 'wave':
-        return actions[3];
-        break;
-      case 'dance': 
-      return actions[0];
-      break;
-      case 'death': 
-      return actions[1];
-      break;
-      case 'thriller':
-      return actions[2];
-      break;
-    }
+  const renderByString = (string) => {
+    let filter = actions.filter((action) => {
+      let clip = action._clip;
+      let name = clip.name;
+      return name == string;
+    });
+
+    return filter[0];
   };
 
-  console.log(renderAnimation(current)._clip.duration)
-
-  const currentDuration = renderAnimation(current)._clip.duration;
-
   useEffect(() => {
-    renderAnimation(current).play();
+    renderByString('Waving').play();
   }, []);
-
-
 
   // const useAnimations = (anims) => {
   //   anims.forEach((animation) => {
@@ -83,8 +70,9 @@ export function Model(props) {
   // useAnimations(animations);
 
   const hc = (e) => {
-    // mixer.stopAllAction();
+    mixer.stopAllAction();
     // actions[4].play();
+    renderByString('Death').play();
   }
 
   return (
