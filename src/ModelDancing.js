@@ -6,10 +6,11 @@ import { useFrame } from '@react-three/fiber'
 
 export function Model(props) {
   const group = useRef()
-  const { nodes, scene, materials, animations } = useGLTF('/untitled.glb')
+  const { nodes, scene, materials, animations } = useGLTF('/FinishedCharacter.glb')
 
   let mixer = new AnimationMixer(scene);
   let actions = mixer._actions;
+  console.log(actions)
 
   const useAnimations = (anims) => {
     anims.forEach((animation) => {
@@ -39,15 +40,19 @@ export function Model(props) {
     });
 
     useFrame((state, delta) => { mixer.update(delta) } );
-
-    actions[0].play();
+    actions[3].play();
   };
   
   useAnimations(animations);
 
+  const hc = (e) => {
+    // mixer.stopAllAction();
+    // actions[4].play();
+  }
+
   return (
-    <group ref={group} {...props} dispose={null}>
-      <group name="Scene">
+    <group  ref={group} {...props} dispose={null}>
+      <group onClick={hc} name="Scene">
         <group name="Armature">
           <primitive object={nodes.Hips} />
           <skinnedMesh name="Wolf3D_Body" geometry={nodes.Wolf3D_Body.geometry} material={materials.Wolf3D_Body} skeleton={nodes.Wolf3D_Body.skeleton} />
@@ -65,4 +70,4 @@ export function Model(props) {
   )
 }
 
-useGLTF.preload('/ModelDancing.gltf')
+useGLTF.preload('/FinishedCharacter.glb')

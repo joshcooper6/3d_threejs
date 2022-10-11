@@ -8,9 +8,9 @@ import { sRGBEncoding } from 'three';
 function App(props) {
 
    const links = [
-      { name: 'Ready Player Me', src: '' },
-      { name: 'Blender', src: '' },
-      { name: 'Mixamo', src: '' }
+      { name: 'Ready Player Me', src: '#' },
+      { name: 'Blender', src: '#' },
+      { name: 'Mixamo', src: '#' }
    ]
 
    const rendered = links.map((link) => 
